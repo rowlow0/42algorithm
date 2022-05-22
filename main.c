@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#define N 10
-#define K 40
+#define N 6
+#define K 12
 
 int	**init(int ***map, int n)
 {
@@ -78,11 +78,12 @@ void queen(int **map, int n)
 		printf("there is no place for queen\n");
 		return ;
 	}
-	int floor = n % 2 ? 1 : 0;
-    for (int i = 0; i < n / 2 + floor; i++)
+	int floor = n % 2 ? 1 : 0; //ceil((double)n / 2);
+	int	set = n / 2 + floor;
+    for (int i = 0; i < set; i++)
 		map[i][i * 2] = 'Q';
 	for (int i = 0; i < n /2; i++)
-		map[i + n / 2 + floor][i * 2 + 1] = 'Q';
+		map[i + set][i * 2 + 1] = 'Q';
     print_map(map, n);
     reset(map, n);
 }
@@ -99,27 +100,28 @@ void knight(int **map, int n, int k)
 	{
 		for(int i = 0; i < n && k; i++)
 			for(int j = 0; j < n && k; j++)
+				if(k--)
 					map[i][j] = 'K';
 	}
 	else
-	{
 		for (int i = 0; i < n && k; i += 3)
 			for (int j = 0; j < n && k; j++)
 				if(k--)
 					map[i][j] = 'K';
-	}
 	print_map(map, n);
     reset(map, n);
 }
 
-void tour_knight(int **map, int n)
+void closed_knight_tour(int **map, int n)
 {
-	if (n < 5)
+	printf("answer 5\n");
+	if (n < 6 || n % 2) //6 8 10 12 ..
 	{
 		printf("there is no place for knight tour\n");
 		return ;
 	}
-	(void)map;
+	print_map(map, n);
+    reset(map, n);
 }
 
 int main()
@@ -129,16 +131,8 @@ int main()
     bishop(map, N);
 	queen(map, N);
 	knight(map, N, K);
-	tour_knight(map, N);
+	closed_knight_tour(map, N);
 	clear(&map, N);
 	//system("leaks a.out");
     return (0);
 }
-
-/*
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-*/
