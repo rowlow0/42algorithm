@@ -21,11 +21,8 @@ struct ArrayList
 
 int main()
 {
-    if (N <= 0)
-    {
-        printf("Null\n");
+    if (N <= 0 || N < K || K <= 0)
         return (1);
-    }
     array_list *arr = malloc(sizeof(array_list));
     arr->array = calloc(1, sizeof(node) * N);
     arr->count = 0;

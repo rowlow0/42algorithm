@@ -126,6 +126,8 @@ void closed_knight_tour(int **map, int n)
 
 int main()
 {
+	if (N <= 0 || K <= 0)
+        return (1);
     int **map = init(&map, N);
 	rook(map, N);
     bishop(map, N);
