@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define N 10
-#define K 1
+#define N 6000
+#define K 200
 typedef unsigned long long ull;
 
 struct Node
 {
-    int data;
+    ull cell;
     int k;
 } typedef node;
 
@@ -34,15 +34,15 @@ int main()
         {
             if(!--arr->array[j].k)
             {
-                arr->sum -= arr->array[j].data;
-                arr->array[j].data *= 2;
-                arr->sum += arr->array[j].data;
+                arr->sum -= arr->array[j].cell;
+                arr->array[j].cell *= 2;
+                arr->sum += arr->array[j].cell;
                 arr->array[j].k = arr->dup_time;
             }
         }
         arr->array[arr->count].k = arr->dup_time;
-        arr->array[arr->count].data++;
-        arr->sum += arr->array[arr->count++].data;
+        arr->array[arr->count].cell++;
+        arr->sum += arr->array[arr->count++].cell;
         printf("%llu virus in %d times\n",arr->sum, i + 1);
     }
     free(arr->array);

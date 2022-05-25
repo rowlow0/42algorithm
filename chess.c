@@ -91,7 +91,7 @@ void queen(int **map, int n)
 void knight(int **map, int n, int k)
 {
 	printf("answer 4\n");
-	if (k <= 0 || n <= 0 || (n != 2 && n != 3 && k > (int)ceil((double)n / 3) * n) || (n == 2 && (k > 4)) || (n == 3 && (k > 3)))
+	if ((n != 2 && n != 3 && k > (int)ceil((double)n / 3) * n) || (n == 2 && (k > 4)) || (n == 3 && (k > 3)))
 	{
 		printf("there is no place for knight\n");
 		return ;
