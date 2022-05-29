@@ -9,7 +9,6 @@ typedef struct Node
 {
     int data;
     int key;
-    int height
 } node;
 
 typedef struct Record
