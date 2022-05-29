@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define N 5
-#define K 1
+#define K 3
 #define M 1
-#define first 0
+#define first 1
 
 int max_fibonacci(int n)
 {
