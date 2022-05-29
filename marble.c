@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define N 10
+#define N 5
 #define K 1
 #define M 1
 #define first 0
@@ -67,7 +67,7 @@ int is_fibonacci(int i)
             printf("idk\n");
     }
     printf("game 2\n");
-    count = N, limit = count - 1, pre = M;
+    count = N, pre = M;
     if(first)
     {
         if(!is_fibonacci(count))
@@ -93,10 +93,51 @@ int is_fibonacci(int i)
             else
                 printf("idk\n");
         }
-     }
-     printf("game 3\n");
-
-     printf("game 4\n");
-
-     return (0);
+    }
+    printf("game 3\n");
+        count = N, limit = K, pre = M;
+    if(first)
+    {
+        if(((count <= limit || (count - limit) % 2 == 0)) && !is_fibonacci(count))
+            printf("victory\n");
+        else
+            printf("idk\n");
+    }
+    else
+    {
+        count -= pre;
+        if((count <= limit || (count - limit) % 2) && (is_fibonacci(count) && count <= 2 * pre || zeckendorf(count) <= pre *2))
+            printf("victory\n");
+        else
+            printf("idk\n");
+    }
+    printf("game 4\n");
+    count = N, limit = K, pre = M;
+    if(first)
+    {
+        if((count <= limit || (count - limit) % 2 == 0) || !is_fibonacci(count))
+            printf("victory\n");
+        else
+            printf("idk\n");
+    }
+    else
+    {
+        count -= pre;
+        if(count <= limit || (count - limit) % 2)
+            printf("victory\n");
+        else if(is_fibonacci(count))
+        {
+            if (count <= 2 * pre)
+                printf("victory\n");
+        }
+        else
+        {
+            int fibonacci = zeckendorf(count);
+            if (fibonacci <= pre * 2)
+                printf("victory\n");
+            else
+                printf("idk\n");
+        }
+    }
+    return (0);
  }
