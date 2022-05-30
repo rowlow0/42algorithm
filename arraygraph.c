@@ -80,6 +80,21 @@ int addVertexAG(ArrayGraph* pGraph, int vertexID)
     return 0;
 }
 
+//add vertex
+int addVertexAG2(ArrayGraph** pGraph, int vertexID)
+{
+    if((*pGraph) && (*pGraph)->pVertex && ((*pGraph)->graphType == 1 ||  (*pGraph)->graphType == 2) && (*pGraph)->currentVertexCount < (*pGraph)->maxVertexCount && !checkVertexValid((*pGraph), vertexID))
+    {
+        (*pGraph)->currentVertexCount++;
+        if (++(*pGraph)->rear == (*pGraph)->maxVertexCount)
+            (*pGraph)->rear = 0;
+        (*pGraph)->ppAdjEdge[(*pGraph)->rear] = calloc(sizeof(int *), sizeof(int *) * (*pGraph)->maxVertexCount);
+        (*pGraph)->ppAdjEdge[(*pGraph)->rear][(*pGraph)->rear]= 1;
+        return (*pGraph)->pVertex[(*pGraph)->rear] = vertexID;
+    }
+    return 0;
+}
+
 //add edge to directed graph
 int addEdgeAG(ArrayGraph* pGraph, int fromVertexID, int toVertexID)
 {
