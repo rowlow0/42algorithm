@@ -3,8 +3,7 @@
 #include "arraygraph.c" // graph
 #include <time.h>
 #include <limits.h>
-#define graphSize 10
-#define V 9
+#define graphSize 50
 
     typedef struct T_STRUCT
     {
@@ -13,65 +12,70 @@
         int q;
     } t_struct;
 
-    int minDistance(int *dist, int *sptSet)
+int minDistance(int *dist, int *sptSet, ArrayGraph *pGraph)
 {
     // Initialize min value
     int min = INT_MAX, min_index;
- 
-    for (int v = 0; v < V; v++)
+
+    for (int v = 0; v < pGraph->currentVertexCount; v++)
         if (!sptSet[v] && dist[v] <= min)
             min = dist[v], min_index = v;
- 
     return min_index;
 }
  
 // A utility function to print the constructed distance array
-void printSolution(int dist[])
+void printSolution(int *dist, ArrayGraph *pGraph)
 {
     printf("Vertex \t\t Distance from Source\n");
-    for (int i = 0; i < V; i++)
-        printf("%d \t\t %d\n", i, dist[i]);
+    for (int i = 0, j = pGraph->front; i < pGraph->currentVertexCount; i++, j++)
+        printf("%d \t\t %d\n", pGraph->pVertex[j % pGraph->maxVertexCount], dist[i]);
 }
  
 // Function that implements Dijkstra's single source shortest path algorithm
 // for a graph represented using adjacency matrix representation
-void dijkstra(int graph[V][V], int src)
+void dijkstra(ArrayGraph *pGraph)
 {
-    int dist[V]; // The output array.  dist[i] will hold the shortest
+    int *dist = calloc(sizeof(int), pGraph->currentVertexCount * sizeof(int)); // The output array.  dist[i] will hold the shortest
     // distance from src to i
  
-    int sptSet[V]; // sptSet[i] will be true if vertex i is included in shortest
+    int *sptSet  = calloc(sizeof(int), pGraph->currentVertexCount * sizeof(int)); // sptSet[i] will be true if vertex i is included in shortest
     // path tree or shortest distance from src to i is finalized
+
  
     // Initialize all distances as INFINITE and stpSet[] as false
-    for (int i = 0; i < V; i++)
-        dist[i] = INT_MAX, sptSet[i] = 0;
+    for (int i = 0; i < pGraph->currentVertexCount; i++)
+                dist[i] = INT_MAX, sptSet[i] = 0;
  
     // Distance of source vertex from itself is always 0
-    dist[src] = 0;
+    dist[0] = 0;
  
     // Find shortest path for all vertices
-    for (int count = 0; count < V - 1; count++) {
+    for (int count = 0; count < pGraph->currentVertexCount - 1; count++) {
         // Pick the minimum distance vertex from the set of vertices not
         // yet processed. u is always equal to src in the first iteration.
-        int u = minDistance(dist, sptSet);
+        int u = minDistance(dist, sptSet, pGraph);
  
         // Mark the picked vertex as processed
         sptSet[u] = 1;
  
         // Update dist value of the adjacent vertices of the picked vertex.
-        for (int v = 0; v < V; v++)
+        for (int v = 0; v < pGraph->currentVertexCount; v++)
  
             // Update dist[v] only if is not in sptSet, there is an edge from
             // u to v, and total weight of path from src to  v through u is
             // smaller than current value of dist[v]
-            if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX
-                && dist[u] + graph[u][v] < dist[v])
-                dist[v] = dist[u] + graph[u][v];
+            if (!sptSet[v] && pGraph->ppAdjEdge[u][v] && dist[u] != INT_MAX
+                && dist[u] + pGraph->ppAdjEdge[u][v] < dist[v])
+                dist[v] = dist[u] + pGraph->ppAdjEdge[u][v];
     }
  
+    for (int i = 0; i < pGraph->currentVertexCount; i++)
+        if(dist[i] == INT_MAX)
+                dist[i] = -1;
     // print the constructed distance array
-    printSolution(dist);
+    printSolution(dist, pGraph);
+    free(dist);
+    free(sptSet);
 }
 
 void printEdgeSelectedVertex(ArrayGraph *pGraph, int vertex)
@@ -99,6 +103,25 @@ void bfs (ArrayGraph *pGraph, int vertex, int q, int *visited)
                 for (int k = 0; k < pGraph->maxVertexCount; k++)
                     if(pGraph->ppAdjEdge[i % pGraph->maxVertexCount][k] && k != i % pGraph->maxVertexCount && !visited[k] && pGraph->pVertex[i % pGraph->maxVertexCount] == vertex)
                         bfs(pGraph, pGraph->pVertex[k], q - 1, visited);
+}
+
+void bfs3 (ArrayGraph *pGraph, t_struct *temp, int *ww)
+{
+    if (temp->q < 0)
+        return ;
+    temp->visited[temp->vertex-1] = 1;
+    (*ww)++;
+    for (int i = pGraph->front, j = 0; j < pGraph->currentVertexCount; j++, i++)
+                for (int k = 0; k < pGraph->maxVertexCount; k++)
+                    if(pGraph->ppAdjEdge[i % pGraph->maxVertexCount][k] && k != i % pGraph->maxVertexCount && !temp->visited[k] && pGraph->pVertex[i % pGraph->maxVertexCount] == temp->vertex)
+                    {
+                        temp->q--;
+                        int tt = temp->vertex;
+                        temp->vertex = pGraph->pVertex[k];
+                        bfs3(pGraph, temp, ww);
+                        temp->q++;
+                        temp->vertex = tt;
+                    }
 }
 
 void bfs2 (ArrayGraph *pGraph, ArrayGraph **dest, t_struct *temp)
@@ -177,7 +200,7 @@ int main()
     //displayArrayGraph(g);
     for(int i = 0; i< g->currentVertexCount; i++)
     {
-        for (int j = 0; j < 2; j++)
+        for (int j = 0; j < 3; j++)
         {
             shuffle(extra, g->currentVertexCount);
             shuffle(dummy, g->currentVertexCount);
@@ -203,17 +226,38 @@ int main()
     free(visited);
     printf("\n\n");
     printf("third\n\n");
-    ArrayGraph *g2 = createArrayGraph(graphSize,GRAPH_DIRECTED);
     t_struct *temp = malloc(sizeof(t_struct));
     temp->visited = calloc(4, sizeof(int *) * g->currentVertexCount);
     temp->vertex=1;
     temp->q = 2;
+    int w = 0;
+    bfs3(g, temp, &w);
+    free(temp->visited);
+    ArrayGraph *g2 = createArrayGraph(w,GRAPH_DIRECTED);
+    temp->visited = calloc(4, sizeof(int *) * w);
+    temp->vertex=3;
+    temp->q = 2;
     bfs2(g, &g2,temp);
     displayArrayGraph(g2);
+    dijkstra(g2);
     free(temp->visited);
     free(temp);
     deleteArrayGraph(&g2);
     printf("fourth\n\n");
+    temp = malloc(sizeof(t_struct));
+    for (int i = 0; i < w; i++)
+    {
+        temp->q = 2;
+        temp->visited = calloc(4, sizeof(int *) * w);
+        temp->vertex=i+1;
+        g2 = createArrayGraph(w,GRAPH_DIRECTED);
+        bfs2(g, &g2,temp);
+        displayArrayGraph(g2);
+        dijkstra(g2);
+        free(temp->visited);
+        deleteArrayGraph(&g2);
+    }
+    free(temp);
     deleteArrayGraph(&g);
     //system("leaks a.out");
     //gcc -g -fsanitize=address -Wall -Wextra -Werror graph.c
