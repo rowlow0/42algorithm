@@ -235,13 +235,16 @@ int main()
     free(temp->visited);
     ArrayGraph *g2 = createArrayGraph(w,GRAPH_DIRECTED);
     temp->visited = calloc(4, sizeof(int *) * w);
-    temp->vertex=3;
+    temp->vertex=1;
     temp->q = 2;
     bfs2(g, &g2,temp);
     displayArrayGraph(g2);
     dijkstra(g2);
     free(temp->visited);
     free(temp);
+    int *qqq = malloc(sizeof(int) * w);
+    for (int i = 0; i < w; i++)
+        *(qqq + i) = g2->pVertex[i];
     deleteArrayGraph(&g2);
     printf("fourth\n\n");
     temp = malloc(sizeof(t_struct));
@@ -249,7 +252,7 @@ int main()
     {
         temp->q = 2;
         temp->visited = calloc(4, sizeof(int *) * w);
-        temp->vertex=i+1;
+        temp->vertex= qqq[i];
         g2 = createArrayGraph(w,GRAPH_DIRECTED);
         bfs2(g, &g2,temp);
         displayArrayGraph(g2);
@@ -257,6 +260,7 @@ int main()
         free(temp->visited);
         deleteArrayGraph(&g2);
     }
+    free(qqq);
     free(temp);
     deleteArrayGraph(&g);
     //system("leaks a.out");
